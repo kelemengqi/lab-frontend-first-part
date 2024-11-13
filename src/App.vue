@@ -1,3 +1,11 @@
+<!--
+ * @Author: kelemengqi 1565916105@qq.com
+ * @Date: 2024-11-08 13:56:24
+ * @LastEditors: kelemengqi 1565916105@qq.com
+ * @LastEditTime: 2024-11-10 23:05:19
+ * @FilePath: /lab-frontend-first-part/src/App.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import { useMessageStore } from '@/stores/message'
@@ -15,7 +23,9 @@ const { message } = storeToRefs(store)
       <div class="wrapper">
         <nav class="py-6">
           <RouterLink class="font-bold text-gray-700" exact-active-class="text-green-500" :to="{ name: 'event-list-view' }">Event</RouterLink> |
-          <RouterLink class="font-bold text-gray-700" exact-active-class="text-green-500" :to="{ name: 'about' }">About</RouterLink>
+          <RouterLink class="font-bold text-gray-700" exact-active-class="text-green-500" :to="{ name: 'about' }">About</RouterLink>|
+          <RouterLink class="font-bold text-gray-700" exact-active-class="text-green-500" :to="{ name: 'add-event' }">New Event</RouterLink>|
+          <RouterLink class="font-bold text-gray-700" :to="{ name: 'add-organization' }">NewOrganization</RouterLink>
         </nav>
       </div>
     </header>

@@ -1,3 +1,11 @@
+<!--
+ * @Author: kelemengqi 1565916105@qq.com
+ * @Date: 2024-11-08 13:56:24
+ * @LastEditors: kelemengqi 1565916105@qq.com
+ * @LastEditTime: 2024-11-10 23:10:17
+ * @FilePath: /lab-frontend-first-part/src/components/EventCard.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup lang="ts">
 import { type Event } from '@/types'
 defineProps<{
@@ -20,10 +28,13 @@ defineProps<{
   <RouterLink class="event-link" :to="{ name: 'event-detail-view', params: { id: event.id } }">
     <div class="cursor-pointer border border-gray-600 p-[20px] w-[250px] mb-[18px] hover:scale-101 hover:shadow-sp">
       <h2>{{ event.title }}</h2>
-      <span>@{{ event.time }} on {{ event.date }}</span>
+      <span>by</span>
+      <h5>{{ event.organizer.name }}</h5>
+      <span>{{ event.category }} @ {{ event.location }}</span>
     </div>
   </RouterLink>
 </template>
+
 
 <style scoped>
 /* .event-card {

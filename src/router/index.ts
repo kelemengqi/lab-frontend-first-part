@@ -10,6 +10,10 @@ import NetworkErrorView from '@/views/NetworkErrorView.vue'
 import nProgress from 'nprogress'
 import EventService from '@/services/EventService'
 import { useEventStore } from '@/stores/event'
+import AddEventView from '@/views/EventFormView.vue' 
+import OrganizationFormView from '@/views/OrganizationFormView.vue'
+import OrganizationDetailView from '@/views/OrganizationDetailView.vue'
+ // 新增的事件创建页面
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,8 +66,25 @@ const router = createRouter({
           name: 'event-edit-view',
           component: EventEditView,
           props: true
+        },
+        {
+          path: '/organization/:id',
+          name: 'organization-detail-view',
+          component: OrganizationDetailView,
+          props: true
         }
+       
       ]
+    },
+    {
+      path: '/add-organization',
+      name: 'add-organization',
+      component: OrganizationFormView
+    },
+    {
+      path: '/add-event',  // 新增的创建事件路由
+      name: 'add-event',
+      component: AddEventView,  // 关联到你创建的 EventFormView.vue
     },
     {
       path: '/network-error',
@@ -95,6 +116,7 @@ const router = createRouter({
     }
   }
 })
+
 router.beforeEach(() => {
   nProgress.start()
 })

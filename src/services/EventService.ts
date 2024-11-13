@@ -1,19 +1,27 @@
-import axios from 'axios'
+/*
+ * @Author: kelemengqi 1565916105@qq.com
+ * @Date: 2024-11-08 13:56:24
+ * @LastEditors: kelemengqi 1565916105@qq.com
+ * @LastEditTime: 2024-11-10 22:15:24
+ * @FilePath: /lab-frontend-first-part/src/services/EventService.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://my-json-server.typicode.com/code-pop/touring-vue-router',
+  // baseURL: 'http://localhost:8080',
+   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
-})
+  },
+});
 
 export default {
-  getEvents(perPage: Number, page: Number) {
-    return apiClient.get('/events?_limit=' + perPage + '&_page=' + page)
-  },
   getEvent(id: number) {
-    return apiClient.get('/events/' + id)
-  }
-}
+    return apiClient.get(`/events/${id}`);
+  },
+  saveEvent(event: Event) {
+    return apiClient.post('/events', event);
+  },
+};

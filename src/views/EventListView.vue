@@ -5,6 +5,7 @@ import { ref, onMounted, computed, watchEffect } from 'vue'
 import EventService from '@/services/EventService'
 import { useRouter } from 'vue-router'
 
+
 const router = useRouter()
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
@@ -31,7 +32,10 @@ onMounted(() => {
       })
   })
 })
+
+
 </script>
+
 
 <template>
   <h1>Events For Good</h1>
