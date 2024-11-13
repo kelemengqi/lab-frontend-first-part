@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import EventService from '@/services/EventService'
 import { useMessageStore } from '@/stores/message'
-
-const event = ref({
+import BaseInput from '@/components/BaseInput.vue'
+import type { EventItem, Organizer } from '@/types'
+import OrganizerSerivce from '@/services/OrganizerService'
+const item = ref<EventItem>({
   id: 0,
   category: '',
   title: '',
@@ -16,15 +18,14 @@ const event = ref({
   organizer: {
  id: 0,
  name: ''
- }
+  }
 })
-
 const router = useRouter()
 const store = useMessageStore()
 
 // 保存事件的函数
 function saveEvent() {
-  EventService.saveEvent(event.value)
+  EventService.saveEvent(item.value)
     .then((response) => {
       // 保存成功后跳转到事件详情页面
       router.push({ name: 'event-detail-view', params: { id: response.data.id } })
@@ -39,6 +40,16 @@ function saveEvent() {
       router.push({ name: 'network-error-view' })
     })
 }
+const organizers = ref<Organizer[]>([])
+onMounted(() => {
+ OrganizerSerivce.getOrganizers()
+ .then((response) => {
+ organizers.value = response.data
+ })
+ .catch(() => {
+ router.push({ name: 'network-error-view' })
+ })
+})
 </script>
 
 <template>
@@ -46,53 +57,41 @@ function saveEvent() {
     <h1>Create an Event</h1>
     <form @submit.prevent="saveEvent">
       <!-- Category Input -->
-      <label>Category</label>
-      <input
-        v-model="event.category"
-        type="text"
-        placeholder="Category"
-        class="field"
-      />
+      <BaseInput v-model="item.category" type="text" label="Category" />
 
-      <h3>Name & Describe Your Event</h3>
-      <!-- Title Input -->
-      <label>Title</label>
-      <input
-        v-model="event.title"
-        type="text"
-        placeholder="Title"
-        class="field"
-      />
+     
+      <BaseInput v-model="item.title" type="text" label="Title" />
 
-      <!-- Description Input -->
-      <label>Description</label>
-      <input
-        v-model="event.description"
-        type="text"
-        placeholder="Description"
-        class="field"
-      />
 
-      <h3>Where is your event?</h3>
-      <!-- Location Input -->
-      <label>Location</label>
-      <input
-        v-model="event.location"
-        type="text"
-        placeholder="Location"
-        class="field"
-      />
-
+  
+      <BaseInput v-model="item.description" type="text" label="Description" />
+   
       
-      <label>date</label>
-      <input v-model="event.date" type="text" placeholder="date" class="field" required />
+      <BaseInput v-model="item.location" type="text" label="Location" />
+      
+      <h3>Who is your organizer?</h3>
+ <label>Select an Organizer</label>
+ <select v-model="item.organizer.id">
+ <option
+ v-for="option in organizers"
+ :value="option.id"
+ :key="option.id"
+ :selected="option.id === item.organizer.id"
+ >
+ {{ option.name }}
+ </option>
+ </select>
+      
+      
 
       <!-- Submit Button -->
+
+
       <button type="submit" class="button">Submit</button>
     </form>
 
     <!-- Display Event Data (for debugging) -->
-    <pre>{{ event }}</pre>
+    <pre>{{ item }}</pre>
   </div>
 </template>
 

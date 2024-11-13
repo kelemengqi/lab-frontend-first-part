@@ -1,3 +1,11 @@
+<!--
+ * @Author: kelemengqi 1565916105@qq.com
+ * @Date: 2024-11-08 13:56:24
+ * @LastEditors: kelemengqi 1565916105@qq.com
+ * @LastEditTime: 2024-11-13 22:33:06
+ * @FilePath: /lab-frontend-first-part/src/views/EventListView.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
 import { type Event } from '@/types'
@@ -22,7 +30,7 @@ const props = defineProps({
 const page = computed(() => props.page)
 onMounted(() => {
   watchEffect(() => {
-    EventService.getEvents(3, page.value)
+    EventService.getEvents(3,page.value)
       .then((response) => {
         events.value = response.data
         totalEvents.value = response.headers['x-total-count']
