@@ -4,9 +4,10 @@ import { useRouter } from 'vue-router'
 import EventService from '@/services/EventService'
 import { useMessageStore } from '@/stores/message'
 import BaseInput from '@/components/BaseInput.vue'
-import type { EventItem, Organizer } from '@/types'
+import type { Event, Organizer } from '@/types'
 import OrganizerSerivce from '@/services/OrganizerService'
-const item = ref<EventItem>({
+import BaseSelect from '@/components/BaseSelect.vue'
+const event= ref<Event>({
   id: 0,
   category: '',
   title: '',
@@ -25,7 +26,7 @@ const store = useMessageStore()
 
 // 保存事件的函数
 function saveEvent() {
-  EventService.saveEvent(item.value)
+  EventService.saveEvent(event.value)
     .then((response) => {
       // 保存成功后跳转到事件详情页面
       router.push({ name: 'event-detail-view', params: { id: response.data.id } })
@@ -57,41 +58,26 @@ onMounted(() => {
     <h1>Create an Event</h1>
     <form @submit.prevent="saveEvent">
       <!-- Category Input -->
-      <BaseInput v-model="item.category" type="text" label="Category" />
+      <BaseInput v-model="event.category" type="text" label="Category" />
 
      
-      <BaseInput v-model="item.title" type="text" label="Title" />
+      <BaseInput v-model="event.title" type="text" label="Title" />
 
 
   
-      <BaseInput v-model="item.description" type="text" label="Description" />
+      <BaseInput v-model="event.description" type="text" label="Description" />
    
       
-      <BaseInput v-model="item.location" type="text" label="Location" />
+      <BaseInput v-model="event.location" type="text" label="Location" />
       
       <h3>Who is your organizer?</h3>
  <label>Select an Organizer</label>
- <select v-model="item.organizer.id">
- <option
- v-for="option in organizers"
- :value="option.id"
- :key="option.id"
- :selected="option.id === item.organizer.id"
- >
- {{ option.name }}
- </option>
- </select>
-      
-      
-
-      <!-- Submit Button -->
-
-
+ <BaseSelect v-model="event.organizer.id" :options="organizers" label="Organizer" />
       <button type="submit" class="button">Submit</button>
     </form>
 
     <!-- Display Event Data (for debugging) -->
-    <pre>{{ item }}</pre>
+    <pre>{{ event }}</pre>
   </div>
 </template>
 
