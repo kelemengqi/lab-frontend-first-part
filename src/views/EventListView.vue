@@ -1,77 +1,106 @@
-<!--
- * @Author: kelemengqi 1565916105@qq.com
- * @Date: 2024-11-08 13:56:24
- * @LastEditors: kelemengqi 1565916105@qq.com
- * @LastEditTime: 2024-11-13 22:33:06
- * @FilePath: /lab-frontend-first-part/src/views/EventListView.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
 <script setup lang="ts">
 import EventCard from '@/components/EventCard.vue'
 import { type Event } from '@/types'
 import { ref, onMounted, computed, watchEffect } from 'vue'
 import EventService from '@/services/EventService'
 import { useRouter } from 'vue-router'
+import BaseInput from '@/components/BaseInput.vue'
 
 
+const keyword = ref('')
+const typeFilter = ref('') // 新增类型筛选
 const router = useRouter()
 const events = ref<Event[] | null>(null)
 const totalEvents = ref(0)
-const hasNexPage = computed(() => {
+
+const hasNextPage = computed(() => {
   const totalPages = Math.ceil(totalEvents.value / 3)
   return page.value < totalPages
 })
+
 const props = defineProps({
   page: {
     type: Number,
     required: true
   }
 })
+
 const page = computed(() => props.page)
+
+// 更新关键字和类型，并查询事件
+function updateKeyword(value: string = keyword.value) {
+  keyword.value = value;
+
+  let queryFunction;
+
+  if (!keyword.value || keyword.value.trim() === '') {
+    queryFunction = EventService.getEvents(1, page.value); // 将每页数量更新为 1
+    console.log(`Calling API: /events?_limit=1&_page=${page.value}`);
+  } else {
+    queryFunction = EventService.getEventsByKeyword(keyword.value.trim(), 1, page.value);
+    console.log(`Calling API: /events?title=${keyword.value.trim()}&_limit=1&_page=${page.value}`);
+  }
+
+  queryFunction
+    .then((response) => {
+      events.value = response.data;
+      totalEvents.value = response.headers['x-total-count'];
+      console.log('Events:', events.value);
+      console.log('Total Events:', totalEvents.value);
+    })
+    .catch(() => {
+      router.push({ name: 'NetworkError' });
+    });
+}
+
+
+
 onMounted(() => {
   watchEffect(() => {
-    EventService.getEvents(3,page.value)
-      .then((response) => {
-        events.value = response.data
-        totalEvents.value = response.headers['x-total-count']
-      })
-      .catch(() => {
-        router.push({ name: 'network-error-view' })
-      })
+    updateKeyword()
   })
 })
-
-
 </script>
-
 
 <template>
   <h1>Events For Good</h1>
-  <!-- new element -->
-  <div class="flex flex-col items-center">
+  <main class="flex flex-col items-center">
+    <!-- 搜索框 -->
+    <div class="search-filters">
+      <BaseInput
+        v-model="typeFilter"
+        type="text"
+        label="Search by Type..."
+        @input="updateKeyword( $event.target.value)"
+      />
+    </div>
+
+    <!-- 事件卡片 -->
     <EventCard v-for="event in events" :key="event.id" :event="event" />
+    <!-- 分页按钮 -->
     <div class="pagination">
       <RouterLink
         id="page-prev"
         :to="{ name: 'event-list-view', query: { page: page - 1 } }"
         rel="prev"
         v-if="page != 1"
-        >&#60; Prev Page</RouterLink
       >
+        &#60; Prev Page
+      </RouterLink>
 
       <RouterLink
         id="page-next"
         :to="{ name: 'event-list-view', query: { page: page + 1 } }"
         rel="next"
-        v-if="hasNexPage"
-        >Next Page &#62;</RouterLink
+        v-if="hasNextPage"
       >
+        Next Page &#62;
+      </RouterLink>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
-
 .pagination {
   display: flex;
   width: 290px;
@@ -88,5 +117,11 @@ onMounted(() => {
 
 #page-next {
   text-align: right;
+}
+
+.search-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 </style>
